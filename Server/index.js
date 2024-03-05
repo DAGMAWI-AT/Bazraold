@@ -196,6 +196,9 @@ async function run() {
     // });
 
 
+
+
+
 //over view server side
     app.get("/bzoverview", async (req, res) => {
       try {
@@ -532,6 +535,7 @@ async function run() {
     });
 
 //end of portfoli bazra section server side
+
 
     await client.db("admin").command({ ping: 1 });
     console.log(
