@@ -278,8 +278,6 @@ async function run() {
     }
   );
     //end of over view
-
-
 //who we are sectio server side     
     app.post( "/addwhoweare",uploadVideos.single("videoFile"),
       async (req, res) => {
