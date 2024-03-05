@@ -196,6 +196,9 @@ async function run() {
     // });
 
 
+
+
+
 //over view server side
     app.get("/bzoverview", async (req, res) => {
       try {
@@ -245,6 +248,7 @@ async function run() {
       const result = await bzoverviewCollection.deleteOne(filter);
       res.send(result);
     });
+   
   app.patch("/bzoverview/:id",bzoverviewUpload.single("iconFile"),
     async (req, res) => {
       try {
@@ -277,6 +281,8 @@ async function run() {
     }
   );
     //end of over view
+
+
 //who we are sectio server side     
     app.post( "/addwhoweare",uploadVideos.single("videoFile"),
       async (req, res) => {
