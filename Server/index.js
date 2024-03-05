@@ -245,7 +245,6 @@ async function run() {
       const result = await bzoverviewCollection.deleteOne(filter);
       res.send(result);
     });
-   
   app.patch("/bzoverview/:id",bzoverviewUpload.single("iconFile"),
     async (req, res) => {
       try {
