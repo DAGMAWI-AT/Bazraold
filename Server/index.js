@@ -7,7 +7,6 @@ const path = require("path");
 // const { google } = require("googleapis");
 // require('dotenv').config();
 
-
 // const scopes = "https://www.googleapis.com/auth/analytics.readonly";
 
 // const jwt = new google.auth.JWT(
@@ -72,7 +71,7 @@ app.use("/videos", express.static(path.join(__dirname, "public/videos")));
 app.use("/overview", express.static(path.join(__dirname, "public/overview")));
 
 
-// ... Your route and MongoDB configuration code
+// ... Your route and MongoDB configuration code to  sote image and video
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "public/images");
