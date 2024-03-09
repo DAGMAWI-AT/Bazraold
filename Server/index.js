@@ -4,9 +4,66 @@ const port = process.env.PORT || 8000;
 const cors = require("cors");
 const multer = require("multer");
 const path = require("path");
-const { google } = require('googleapis');
-const axios = require('axios');
-const fs = require('fs');
+// const { google } = require("googleapis");
+// require('dotenv').config();
+
+
+// const scopes = "https://www.googleapis.com/auth/analytics.readonly";
+
+// const jwt = new google.auth.JWT(
+//   process.env.CLIENT_EMAIL,
+//   null,
+//   process.env.PRIVATE_KEY.replace(/\\n/g, "\n"),
+//   scopes
+// );
+// const view_id = "299588117";
+
+// // async function getViews(){
+// //   try {
+// //     await jwt.authorize();
+
+// //     const response = await google.analytics("v3").data.ga.get({
+// //       auth: jwt,
+// //       ids: "ga:" + view_id,
+// //       "start-date": "30daysAgo",
+// //       "end-date": "today",
+// //       metrics: "ga:pageviews",
+// //     });
+
+// //     console.log(response);
+
+// //   } catch (err) {
+// //      console.log(err);
+// //   }
+// // };
+
+// // getViews();
+
+
+// async function getTopPosts() {
+//   try {
+//     await jwt.authorize();
+
+//     const response = await google.analytics("v3").data.ga.get({
+//       auth: jwt,
+//       ids: "ga:" + view_id,
+//       "start-date": "2019-01-01",
+//       "end-date": "today",
+//       dimensions: "ga:pagePath,ga:pageTitle",
+//       metrics: "ga:pageviews",
+//       sort: "-ga:pageviews",
+//       "max-results": "10",
+//       filters: "ga:medium==organic",
+//     });
+
+//    console.log(response);
+//   } catch (err) {
+//    console.log(err);
+//   }
+// };
+// getTopPosts();
+//end of google analytics api code
+
 
 app.use(cors());
 app.use(express.json());
@@ -14,6 +71,8 @@ app.use("/images", express.static(path.join(__dirname, "public/images")));
 app.use("/videos", express.static(path.join(__dirname, "public/videos")));
 app.use("/overview", express.static(path.join(__dirname, "public/overview")));
 
+
+// ... Your route and MongoDB configuration code
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "public/images");
@@ -25,6 +84,9 @@ const storage = multer.diskStorage({
     );
   },
 });
+
+
+
 
 const storageVideos = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -38,6 +100,7 @@ const storageVideos = multer.diskStorage({
   },
 });
 
+//for bazra overview
 const bzoverviewimage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "public/overview");
@@ -50,74 +113,50 @@ const bzoverviewimage = multer.diskStorage({
   },
 });
 
+
+
+const fs = require('fs');
+
 const destinationDirectory = 'public/slide';
 
+// Create destination directory if it doesn't exist
 if (!fs.existsSync(destinationDirectory)) {
   fs.mkdirSync(destinationDirectory, { recursive: true });
 }
 
+
+
+// const gallaryslideupload = multer({ storage: cargallarystorage });
 const upload = multer({ storage: storage });
 const uploadVideos = multer({ storage: storageVideos });
 const bzoverviewUpload = multer({ storage: bzoverviewimage });
+// const uploadServiceImage = multer({ storage: imagestorage });
 
-// MongoDB configuration and routes...
-
-const clientId = 'your-client-id';
-const clientSecret = 'your-client-secret';
-const redirectUri = 'your-redirect-uri';
-const viewId = 'your-google-analytics-view-id';
-
-app.get("/google-analytics", async (req, res) => {
-  try {
-    const auth = await getGoogleAnalyticsAuth();
-    const analyticsData = await getGoogleAnalyticsData(auth, viewId);
-
-    // Process the analyticsData as needed
-    res.json({ success: true, data: analyticsData });
-  } catch (error) {
-    console.error("Error fetching Google Analytics data:", error);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
-  }
+app.get("/", (req, res) => {
+  res.send("hello dagi");
 });
 
-async function getGoogleAnalyticsAuth() {
-  const oauth2Client = new google.auth.OAuth2(
-    clientId,
-    clientSecret,
-    redirectUri
-  );
 
-  const refreshToken = 'your-refresh-token';
 
-  oauth2Client.setCredentials({ refresh_token: refreshToken });
+// mongodb configuration
 
-  const { token } = await oauth2Client.getAccessToken();
-  return token;
-}
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+const uri =
+  "mongodb+srv://bazra:bazra@cluster0.wlz7mry.mongodb.net/?retryWrites=true&w=majority";
 
-async function getGoogleAnalyticsData(authToken, viewId) {
-  const analytics = google.analyticsreporting({ version: 'v4', auth: authToken });
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  },
+});
 
-  const response = await analytics.reports.batchGet({
-    requestBody: {
-      reportRequests: [
-        {
-          viewId: viewId,
-          dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
-          metrics: [{ expression: 'ga:users' }],
-          dimensions: [{ name: 'ga:date' }],
-        },
-      ],
-    },
-  });
 
-  const data = response.data.reports[0].data.rows.map(item => ({
-    date: item.dimensions[0],
-    users: parseInt(item.metrics[0].values[0]),
-  }));
 
-  return data;
-}
+
+
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
@@ -134,7 +173,7 @@ async function run() {
 
 
 
-//over view server side
+//overview server side
     app.get("/bzoverview", async (req, res) => {
       try {
         const videos = await bzoverviewCollection.find().toArray();
@@ -215,7 +254,7 @@ async function run() {
       }
     }
   );
-    //end of over view
+    //end of overview
 
 
 //who we are sectio server side     
